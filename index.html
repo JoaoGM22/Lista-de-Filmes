@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+    <!-- página HTML -->
+<h1>Minha Lista de Filmes</h1>
+
+<form id="form-add-movie">
+  <label for="input-movie-title">Título do Filme:</label><br>
+  <input type="text" id="input-movie-title"><br>
+  <button type="submit">Adicionar Filme</button>
+</form>
+
+<div id="movie-list"></div>
+
+<script>
+  // verifica se o Local Storage está disponível
+  if (window.localStorage) {
+    console.log('Local Storage disponível');
+  } else {
+    console.log('Local Storage não disponível');
+  }
+
+  // sua chave de API do The Movie DB
+  const apiKey = 'SUA_CHAVE_DE_API';
+
+  // obtém a referência ao formulário e ao elemento div da lista de filmes
+  const form = document.querySelector('#form-add-movie');
+  const movieListDiv = document.querySelector('#movie-list');
+
+  // carrega a lista de filmes do Local Storage quando a página é carregada
+  let movies = JSON.parse(localStorage.getItem('movies')) || [];
+  renderMovieList();
+
+  // adiciona um evento de envio ao formulário para adicionar um novo filme à lista
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const movieTitle = document.querySelector('#input-movie-title').value;
+    if (movieTitle) {
+      // pesquisa o filme na API do The Movie DB
+      searchMovie(movieTitle).then((movie) => {
+        // adiciona o filme à lista de filmes
+        movies.push(movie);
+        localStorage.setItem('movies', JSON.stringify(movies));
+        renderMovieList();
+        form.reset();
+      });
+    }
+  });
+
+  // função para pesquisar um filme na API do The Movie DB
+  function searchMovie(title) {
+    return fetch(`https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&query=${encodeURIComponent(title)}`)
+      .then((response) => response.json())
+      .then((data) => {
+        // verifica se houve algum resultado
+        if (data.results.length > 0) {
+          // retorna o primeiro resultado da pesquisa
+          return data.results[0];
+        } else {
+          // se não houver resultado, retorna null
+          return null;
+        }
+      });
+  }
+  // função para renderizar a lista de filmes na página
+  function renderMovieList() {
+    movieListDiv.innerHTML = '';
+    for (let i = 0; i < movies.length; i++) {
+      const movie = movies[i];
+      const movieDiv = document.createElement('div');
+
+      // cria um elemento img com o URL do poster do filme
+      const posterImg = document.createElement('img');
+      posterImg.src = 'https://image.tmdb.org/t/p/w500' + movie.poster_path;
+      posterImg.alt = movie.title + ' poster';
+      movieDiv.appendChild(posterImg);
+
+      // adiciona o título do filme ao elemento div
+      movieDiv.innerHTML += ' ' + movie.title + ' ';
+
+      // cria um botão "Excluir" para remover o filme da lista
+      const deleteButton = document.createElement('button');
+      deleteButton.innerHTML = 'Excluir';
+      deleteButton.addEventListener('click', () => {
+        movies.splice(i, 1);
+        localStorage.setItem('movies', JSON.stringify(movies));
+        renderMovieList();
+      });
+      movieDiv.appendChild(deleteButton);
+
+      // adiciona o elemento div à lista de filmes
+      movieListDiv.appendChild(movieDiv);
+    }
+  }
+</script>
+
+</body>
+</html>
