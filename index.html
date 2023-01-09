@@ -55,7 +55,7 @@
 
   // função para pesquisar um filme na API do OMDb
   function searchMovie(title) {
-    return fetch(`http://www.omdbapi.com/?apikey=${apiKey}&t=${encodeURIComponent(title)}`)
+    return fetch(`https://www.omdbapi.com/?apikey=${apiKey}&t=${encodeURIComponent(title)}`)
       .then((response) => response.json())
       .then((data) => {
         // verifica se houve algum resultado
