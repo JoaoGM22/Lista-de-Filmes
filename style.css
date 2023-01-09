@@ -1,0 +1,24 @@
+/* estilo para o formulário de adição de filmes */
+#form-add-movie {
+    margin-bottom: 20px;
+  }
+
+  /* estilo para os elementos div da lista de filmes */
+  #movie-list div {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  /* estilo para os posters dos filmes */
+  #movie-list img {
+    width: 150px;
+    height: auto;
+  }
+
+  /* estilo para os botões "Excluir" */
+  #movie-list button {
+    margin-left: 10px;
+  }
+
+  

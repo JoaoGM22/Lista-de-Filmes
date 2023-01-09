@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
     <title>Document</title>
 </head>
 <body>
-
     <!-- página HTML -->
 <h1>Minha Lista de Filmes</h1>
 
@@ -27,8 +27,8 @@
     console.log('Local Storage não disponível');
   }
 
-  // sua chave de API do The Movie DB
-  const apiKey = 'SUA_CHAVE_DE_API';
+  // sua chave de API do OMDb
+  const apiKey = '70374582';
 
   // obtém a referência ao formulário e ao elemento div da lista de filmes
   const form = document.querySelector('#form-add-movie');
@@ -43,47 +43,57 @@
     event.preventDefault();
     const movieTitle = document.querySelector('#input-movie-title').value;
     if (movieTitle) {
-      // pesquisa o filme na API do The Movie DB
+      // pesquisa o filme na API do OMDb
       searchMovie(movieTitle).then((movie) => {
         // adiciona o filme à lista de filmes
         movies.push(movie);
         localStorage.setItem('movies', JSON.stringify(movies));
         renderMovieList();
-        form.reset();
       });
     }
   });
 
-  // função para pesquisar um filme na API do The Movie DB
+  // função para pesquisar um filme na API do OMDb
   function searchMovie(title) {
-    return fetch(`https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&query=${encodeURIComponent(title)}`)
+    return fetch(`http://www.omdbapi.com/?apikey=${apiKey}&t=${encodeURIComponent(title)}`)
       .then((response) => response.json())
       .then((data) => {
         // verifica se houve algum resultado
-        if (data.results.length > 0) {
-          // retorna o primeiro resultado da pesquisa
-          return data.results[0];
+        if (data.Response === 'True') {
+          // retorna os dados do filme
+          return {
+            title: data.Title,
+            poster_path: data.Poster
+          };
         } else {
           // se não houver resultado, retorna null
           return null;
         }
       });
   }
-  // função para renderizar a lista de filmes na página
-  function renderMovieList() {
+ // função para renderizar a lista de filmes na página
+ function renderMovieList() {
     movieListDiv.innerHTML = '';
     for (let i = 0; i < movies.length; i++) {
       const movie = movies[i];
       const movieDiv = document.createElement('div');
 
-      // cria um elemento img com o URL do poster do filme
-      const posterImg = document.createElement('img');
-      posterImg.src = 'https://image.tmdb.org/t/p/w500' + movie.poster_path;
-      posterImg.alt = movie.title + ' poster';
-      movieDiv.appendChild(posterImg);
+      // adiciona a verificação aqui
+      if (movie && movie.title && movie.poster_path) {
+        // cria um elemento img com o URL do poster do filme
+        const posterImg = document.createElement('img');
+        posterImg.src = movie.poster_path;
+        posterImg.alt = movie.title + ' poster';
+        movieDiv.appendChild(posterImg);
 
-      // adiciona o título do filme ao elemento div
-      movieDiv.innerHTML += ' ' + movie.title + ' ';
+        // adiciona o título do filme ao elemento div
+        movieDiv.innerHTML += ' ' + movie.title + ' ';
+      } else {
+        // aqui você pode exibir uma mensagem de erro ou um poster padrão
+        const errorMessage = document.createElement('p');
+        errorMessage.innerHTML = 'Dados do filme não disponíveis';
+        movieDiv.appendChild(errorMessage);
+      }
 
       // cria um botão "Excluir" para remover o filme da lista
       const deleteButton = document.createElement('button');
@@ -100,6 +110,5 @@
     }
   }
 </script>
-
 </body>
 </html>
