@@ -1,24 +1,52 @@
-/* estilo para o formulário de adição de filmes */
-#form-add-movie {
+body {
+    /* centraliza o conteúdo da página verticalmente */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #c8a2c8;
+    color: white;
+    /* adiciona algum espaçamento ao topo e aos lados do conteúdo */
+    padding: 50px;
+  }
+  
+  /* estilo para o formulário de adição de filmes */
+  #form-add-movie {
+    
+    /* define o tamanho máximo do formulário */
+    max-width: 500px;
+    /* adiciona algum espaçamento abaixo do formulário */
     margin-bottom: 20px;
   }
-
+  
   /* estilo para os elementos div da lista de filmes */
   #movie-list div {
-    display: flex;
-    align-items: center;
+    
+    /* adiciona algum espaçamento abaixo dos elementos div da lista */
     margin-bottom: 10px;
   }
-
+  
   /* estilo para os posters dos filmes */
-  #movie-list img {
-    width: 150px;
+  #movie-list img.poster {
+    display: block;
+    width: 190px;
     height: auto;
   }
 
+  button.visto {
+    background-color: transparent;
+    border: none;
+  }
+
+  img.visto{
+    height: 50px;
+    
+  }
+  
   /* estilo para os botões "Excluir" */
   #movie-list button {
+    
     margin-left: 10px;
   }
+
 
   

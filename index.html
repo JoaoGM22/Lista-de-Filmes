@@ -5,16 +5,17 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
-    <title>Document</title>
+    <title>Lista de Filmes</title>
 </head>
 <body>
     <!-- página HTML -->
-<h1>Minha Lista de Filmes</h1>
+<h1>Lista de Filmes</h1>
+<br>
 
 <form id="form-add-movie">
-  <label for="input-movie-title">Título do Filme:</label><br>
+  <label for="input-movie-title">Título do Filme em inglês:</label><br>
   <input type="text" id="input-movie-title"><br>
-  <button type="submit">Adicionar Filme</button>
+  <button type="submit" class="button">Adicionar Filme</button>
 </form>
 
 <div id="movie-list"></div>
@@ -78,16 +79,58 @@
       const movie = movies[i];
       const movieDiv = document.createElement('div');
 
+      // adiciona o título do filme ao elemento div
+      movieDiv.innerHTML += ' ' + movie.title + ' ';
+
       // adiciona a verificação aqui
       if (movie && movie.title && movie.poster_path) {
         // cria um elemento img com o URL do poster do filme
         const posterImg = document.createElement('img');
         posterImg.src = movie.poster_path;
         posterImg.alt = movie.title + ' poster';
+        posterImg.classList.add('poster')
         movieDiv.appendChild(posterImg);
 
-        // adiciona o título do filme ao elemento div
-        movieDiv.innerHTML += ' ' + movie.title + ' ';
+       // cria um botão de "Visto"
+       const seenButton = document.createElement('button');
+        seenButton.addEventListener('click', () => {
+          movie.seen = !movie.seen;
+          localStorage.setItem('movies', JSON.stringify(movies));
+          renderMovieList();
+        });
+
+        // cria uma imagem de "visto"
+        const seenImg = document.createElement('img');
+        seenImg.src = movie.seen ? 'seen.png' : 'not-seen.png';
+        seenImg.alt = movie.seen ? 'Filme marcado como visto' : 'Filme não marcado como visto';
+        seenButton.classList.add('visto')
+        seenImg.classList.add('visto')
+        seenButton.appendChild(seenImg);
+        movieDiv.appendChild(seenButton);
+
+        // cria uma área de classificação com estrelas
+        const ratingDiv = document.createElement('div');
+        for (let i = 1; i <= 5; i++) {
+          const starImg = document.createElement('img');
+          starImg.src = 'star.png';
+          starImg.alt = i + '/5';
+          starImg.style.width = '20px';
+          starImg.style.height = 'auto';
+          if (i <= movie.rating) {
+            starImg.style.filter = 'brightness(1)';
+          } else {
+            starImg.style.filter = 'brightness(0.5)';
+          }
+          starImg.addEventListener('click', () => {
+            movie.rating = i;
+            localStorage.setItem('movies', JSON.stringify(movies));
+            renderMovieList();
+          });
+          ratingDiv.appendChild(starImg);
+        }
+        movieDiv.appendChild(ratingDiv);
+
+
       } else {
         // aqui você pode exibir uma mensagem de erro ou um poster padrão
         const errorMessage = document.createElement('p');
@@ -98,6 +141,7 @@
       // cria um botão "Excluir" para remover o filme da lista
       const deleteButton = document.createElement('button');
       deleteButton.innerHTML = 'Excluir';
+      deleteButton.classList.add('button')
       deleteButton.addEventListener('click', () => {
         movies.splice(i, 1);
         localStorage.setItem('movies', JSON.stringify(movies));
